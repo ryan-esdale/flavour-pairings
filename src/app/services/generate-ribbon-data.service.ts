@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as data from '../assets/raw_pairings_no_groups.json';
+import * as data from '../../assets/raw_pairings_no_groups.json';
 @Injectable({
   providedIn: 'root'
 })

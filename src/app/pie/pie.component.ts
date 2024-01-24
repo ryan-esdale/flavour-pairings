@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as d3 from 'd3';
-import { GenerateRibbonDataService } from '../generate-ribbon-data.service';
+import { GenerateRibbonDataService } from '../services/generate-ribbon-data.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,12 +12,12 @@ import { CommonModule } from '@angular/common';
 })
 export class PieComponent {
 
-
   private width = 928;
   private height = this.width;
 
+
   private data: number[][] = [];
-  private names: string[] = [];
+  public names: string[] = [];
   private colors = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373", "#ea1b25", "#c2123c"];
 
   public selectedNames: string[] = ['Allspice', 'Almond']
@@ -79,10 +79,10 @@ export class PieComponent {
 
     group.append("path")
       .attr("fill", (d: any) => this.color(this.names[d.index]))
-      .attr("d", this.arc);
-
-    group.append("title")
-      .text((d: any) => `${this.names[d.index]}\n${this.formatValue(d.value)}`);
+      .attr("d", this.arc)
+      .attr("id", (d: any) => d.index)
+      .append("title")
+      .text((d: any) => `${this.names[d.index]}`);
 
     const groupTick = group.append("g")
       .selectAll()
@@ -99,21 +99,22 @@ export class PieComponent {
       .attr("dy", "0.35em")
       .attr("transform", (d: any) => d.angle > Math.PI ? "rotate(180) translate(-16)" : null)
       .attr("text-anchor", (d: any) => d.angle > Math.PI ? "end" : null)
+      .append("textPath")
+      .attr("href", (d: any) => d.index)
       .text((d: any) => this.formatValue(d.value));
 
-    group.select("text")
-      .attr("font-weight", "bold")
-      .text((d: any) => {
-        return d.getAttribute("text-anchor") === "end"
-          ? `↑ ${this.names[d.index]}`
-          : `${this.names[d.index]} ↓`;
-      });
+    // group.select("text")
+    //   .attr("font-weight", "bold")
+    //   .text((d: any) => {
+    //     return d.getAttribute("text-anchor") === "end"
+    //       ? `↑ ${this.names[d.index]}`
+    //       : `${this.names[d.index]} ↓`;
+    //   });
 
     group.select("text")
       .attr("font-weight", "bold")
-      .text((d: any) => {
-        return this.names[d.index];
-      });
+      // .text((d: any) => {return this.names[d.index];});
+      .text((d: any) => `${d.index}`);
 
     this.svg.append("g")
       .attr("fill-opacity", 0.8)
