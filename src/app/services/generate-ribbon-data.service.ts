@@ -26,7 +26,8 @@ export class GenerateRibbonDataService {
       console.log("Missing headers, using all as default")
       selectedHeaders = this.loadHeaders();
     } else {
-      selectedHeaders = headers
+      // selectedHeaders.push(headers.map(h=>h)))
+      selectedHeaders = JSON.parse(JSON.stringify(headers))
     }
 
 

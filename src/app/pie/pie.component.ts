@@ -20,7 +20,8 @@ export class PieComponent {
   public names: string[] = [];
   private colors = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373", "#ea1b25", "#c2123c"];
 
-  public selectedNames: string[] = ['Allspice', 'Almond']
+  public selectedNames: string[] = ['Chocolate', 'Orange']
+  // public selectedNames: string[] = ['Chocolate']
   private svg: any;
 
   private outerRadius = Math.min(this.width, this.height) * 0.5 - 60;
@@ -53,7 +54,8 @@ export class PieComponent {
     this.data = dat[1]
     this.createSvg();
     this.drawChords(this.data)
-    console.log(dat)
+    // console.log(dat)
+    // console.log(this.color)
   }
 
   private createSvg(): void {
@@ -113,8 +115,8 @@ export class PieComponent {
 
     group.select("text")
       .attr("font-weight", "bold")
-      // .text((d: any) => {return this.names[d.index];});
-      .text((d: any) => `${d.index}`);
+      .text((d: any) => {return this.names[d.index];});
+      // .text((d: any) => `${d.index}`);
 
     this.svg.append("g")
       .attr("fill-opacity", 0.8)
@@ -122,7 +124,13 @@ export class PieComponent {
       .data(chords)
       .join("path")
       .style("mix-blend-mode", "multiply")
-      .attr("fill", (d: any) => this.color(this.names[d.source.index]))
+      .attr("fill", (d: any) => {
+        if(d.source.index < this.selectedNames.length){
+          return this.color(this.names[d.source.index])
+        }else{
+          return "unknown"
+        }
+      })
       .attr("d", this.ribbon)
       .append("title")
       .text((d: any) => `${this.formatValue(d.source.value)} ${this.names[d.target.index]} → ${this.names[d.source.index]}${d.source.index === d.target.index ? "" : `\n${this.formatValue(d.target.value)} ${this.names[d.source.index]} → ${this.names[d.target.index]}`}`);
