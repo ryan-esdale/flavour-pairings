@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import * as d3 from 'd3';
 import { GenerateRibbonDataService } from '../services/generate-ribbon-data.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pie',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pie.component.html',
   styleUrl: './pie.component.css'
 })
@@ -20,7 +21,8 @@ export class PieComponent {
   public names: string[] = [];
   private colors = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373", "#ea1b25", "#c2123c"];
 
-  public selectedNames: string[] = ['Allspice', 'Almond']
+  public selectedNames: string[] = ['Allspice', 'Orange', 'Chocolate', 'Peppercorn']
+  public filterLimit: number = 1
   private svg: any;
 
   private outerRadius = Math.min(this.width, this.height) * 0.5 - 60;
@@ -47,13 +49,22 @@ export class PieComponent {
   constructor(private service: GenerateRibbonDataService) { }
 
   ngOnInit(): void {
-    const dat = this.service.loadData(this.selectedNames)
+    const dat = this.service.loadData(this.selectedNames, this.filterLimit)
     // const dat = this.service.loadData()
     this.names = dat[0]
     this.data = dat[1]
     this.createSvg();
     this.drawChords(this.data)
     console.log(dat)
+  }
+
+  public refreshData() {
+    let dat = this.service.loadData(this.selectedNames, this.filterLimit)
+    // const dat = this.service.loadData()
+    this.names = dat[0]
+    this.data = dat[1]
+    this.createSvg();
+    this.drawChords(this.data)
   }
 
   private createSvg(): void {
@@ -122,7 +133,13 @@ export class PieComponent {
       .data(chords)
       .join("path")
       .style("mix-blend-mode", "multiply")
-      .attr("fill", (d: any) => this.color(this.names[d.source.index]))
+      .attr("fill", (d: any) => {
+        if (d.source.index < this.selectedNames.length)
+          return this.color(this.names[d.source.index])
+
+        return "#6F6F6F"
+
+      })
       .attr("d", this.ribbon)
       .append("title")
       .text((d: any) => `${this.formatValue(d.source.value)} ${this.names[d.target.index]} → ${this.names[d.source.index]}${d.source.index === d.target.index ? "" : `\n${this.formatValue(d.target.value)} ${this.names[d.source.index]} → ${this.names[d.target.index]}`}`);

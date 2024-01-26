@@ -101,6 +101,7 @@ export class ScatterComponent {
     const simulation = d3.forceSimulation(this.nodes)
       .force("link", d3.forceLink(this.links).id(d => d.index || 0))
       .force("charge", d3.forceManyBody().strength(-300))
+      .force("radial", d3.forceRadial((d: any) => { return d.r + 1 || 1 }))
       .force("collide", d3.forceCollide().radius((d: any) => { return d.r + 1 || 1 }))
       // .force('center', d3.forceCenter(0, 0))
       // .force("x", d3.forceX())
