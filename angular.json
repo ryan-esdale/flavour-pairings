@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "docs",
+            "outputPath": "dist/flavour-pairings",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -95,7 +95,10 @@
           }
         },
         "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "buildTarget": "flavour-pairings:build:production"
+          }
         }
       }
     }
