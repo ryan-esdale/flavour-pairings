@@ -5,13 +5,15 @@
       <div style="width:30%">
             Minimum Links: <input [(ngModel)]="filterLimit" type="number" (change)="refreshData()" /><br />
             <!-- <input [(ngModel)]="nameInput" type="text"/> -->
-            <select [(ngModel)]="nameInput">
-                  <option *ngFor="let name of availableNames" value="{{name}}">{{name}}</option>
+            <select [(ngModel)]="nameInput" (select)="addHeader(nameInput)">
+                  <option *ngFor="let name of availableNames" value="{{name}}" (select)="addHeader(nameInput)">{{name}}
+                  </option>
             </select>
-            <button style="background-color: green;" (click)="addHeader(nameInput)">Add</button>
+            <button style=" background-color: green;" (click)="addHeader(nameInput)">Add</button>
             <button (click)="clearHeaders()">Clear Selection</button><br>
             <ul>
-                  <li  *ngFor="let name of selectedNames">{{name}}  <button class="btn-cancel" style="background-color: red;" (click)="removeHeader(name)">X</button></li>
+                  <li *ngFor="let name of selectedNames">{{name}} <button class="btn-cancel"
+                              style="background-color: red;" (click)="removeHeader(name)">X</button></li>
             </ul>
       </div>
 </div>

@@ -64,18 +64,18 @@ export class PieComponent {
     this.updateChords()
   }
 
-  public addHeader(header: string){
-    if( this.selectedNames.includes(header))
+  public addHeader(header: string) {
+    if (this.selectedNames.includes(header))
       return
     this.selectedNames.push(header)
     this.refreshData();
     console.log(this.selectedNames)
   }
 
-  public removeHeader(header:string){
+  public removeHeader(header: string) {
     const index = this.selectedNames.indexOf(header)
-    if(index>=0)
-      this.selectedNames.splice(index,1)
+    if (index >= 0)
+      this.selectedNames.splice(index, 1)
     this.refreshData()
   }
 
@@ -93,7 +93,7 @@ export class PieComponent {
   }
 
   private createSvg(): void {
-    
+
     this.svg = d3.select("figure#chart")
       .append("svg")
       .attr("width", this.width)
@@ -101,110 +101,110 @@ export class PieComponent {
       .attr("viewBox", [-this.width / 2, -this.height / 2, this.width, this.height])
       .attr("style", "width: 100%; height: auto; font: 10px sans-serif;")
     const wrapper = this.svg.append("g");
-    this.ribbonGroup = wrapper.append("g").attr("id","ribbons")
-    this.arcGroup = wrapper.append("g").attr("id","arcs")
-    this.labelGroup = wrapper.append("g").attr("id","labels")
+    this.ribbonGroup = wrapper.append("g").attr("id", "ribbons")
+    this.arcGroup = wrapper.append("g").attr("id", "arcs")
+    this.labelGroup = wrapper.append("g").attr("id", "labels")
   }
 
   private updateChords(): void {
     const duration = 1000
     // https://stackoverflow.com/questions/73659174/update-d3v7-chord-layout
     const chords = this.chord(this.data);
-    
+
 
     // ribbons
     const ribbonsUpdate = this.ribbonGroup
-        .selectAll("path.ribbon")
-        .data(chords)
-    
+      .selectAll("path.ribbon")
+      .data(chords)
+
     const ribbonsEnter = ribbonsUpdate
-        .enter()
-        .append("path")
-        
-    ribbonsUpdate
-        .merge(ribbonsEnter)
-        .attr("opacity", 0)
-        .attr("class", "ribbon")        
-        .transition()
-        .duration(duration)
-        .attr("d", this.ribbon)
-        .attr("fill", (d: any) => {
-              if (d.source.index < this.selectedNames.length)
-                return this.color(this.names[d.source.index])
-      
-              return "#6F6F6F"
-      
-            })
-        .attr('opacity', 1)
+      .enter()
+      .append("path")
 
     ribbonsUpdate
-        .exit()
-        .transition()
-        .duration(duration)
-        .attr("opacity",0)
-        .remove();
+      .merge(ribbonsEnter)
+      .attr("opacity", 0)
+      .attr("class", "ribbon")
+      .transition()
+      .duration(duration)
+      .attr("d", this.ribbon)
+      .attr("fill", (d: any) => {
+        if (d.source.index < this.selectedNames.length)
+          return this.color(this.names[d.source.index])
+
+        return "#6F6F6F"
+
+      })
+      .attr('opacity', 1)
+
+    ribbonsUpdate
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("opacity", 0)
+      .remove();
 
     const arcUpdate = this.arcGroup.selectAll("path.arc")
-            .data(chords.groups)
+      .data(chords.groups)
 
     const arcEnter = arcUpdate
-            .enter()
-            .append("path")
+      .enter()
+      .append("path")
 
     arcUpdate.merge(arcEnter)
-            .attr("opacity", 0)
-            .attr("class", "arc")
-            .transition()
-            .duration(1000)
-            .attr("d", this.arc)
-            .style("fill", (d:any ) => this.color(this.names[d.index]))
-            .attr('opacity', 1)
+      .attr("opacity", 0)
+      .attr("class", "arc")
+      .transition()
+      .duration(1000)
+      .attr("d", this.arc)
+      .style("fill", (d: any) => this.color(this.names[d.index]))
+      .attr('opacity', 1)
 
     arcUpdate
-            .exit()
-            .transition()
-            .duration(1000)
-            .attr("opacity", 0)
-            .remove();
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr("opacity", 0)
+      .remove();
 
 
 
-            // adding labels
+    // adding labels
     const labelsUpdate = this.labelGroup
-        .selectAll("text.titles")
-        .data(chords.groups)
+      .selectAll("text.titles")
+      .data(chords.groups)
 
     const labelsEnter = labelsUpdate
-        .enter()
-        .append("text")
+      .enter()
+      .append("text")
 
     labelsUpdate
-        .merge(labelsEnter)
-        .attr("class", "titles")
-        .attr("opacity", 0)
-        .transition()
-        .duration(duration)
-        .each(function(d:any){ d.angle = (d.startAngle + d.endAngle) / 2; })
-        .attr("dy", ".35em")
-        .attr("text-anchor", function(d:any) { return d.angle > Math.PI ? "end" : null; })
-        .attr("transform", function(d:any) {
-            return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-                + "translate(" + (Math.min(928, 928) * 0.5 - 60 + 10) + ")"
-                + (d.angle > Math.PI ? "rotate(180)" : "");
-        })
-        // .text((d: any) => {
-        //       return d.getAttribute("text-anchor") === "end"
-        //         ? `↑ ${this.names[d.index]}`
-        //         : `${this.names[d.index]} ↓`;
-        //     })       
-        .text((d:any)=> {
-          return this.names[d.index]
-        })
-        .attr("opacity", 1)
-        
+      .merge(labelsEnter)
+      .attr("class", "titles")
+      .attr("opacity", 0)
+      .transition()
+      .duration(duration)
+      .each(function (d: any) { d.angle = (d.startAngle + d.endAngle) / 2; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", function (d: any) { return d.angle > Math.PI ? "end" : null; })
+      .attr("transform", function (d: any) {
+        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+          + "translate(" + (Math.min(928, 928) * 0.5 - 60 + 10) + ")"
+          + (d.angle > Math.PI ? "rotate(180)" : "");
+      })
+      // .text((d: any) => {
+      //       return d.getAttribute("text-anchor") === "end"
+      //         ? `↑ ${this.names[d.index]}`
+      //         : `${this.names[d.index]} ↓`;
+      //     })       
+      .text((d: any) => {
+        return this.names[d.index]
+      })
+      .attr("opacity", 1)
+
     labelsUpdate
-        .exit()
-        .remove()
+      .exit()
+      .remove()
   }
 
   private drawChords(data: any[]): void {
@@ -222,8 +222,8 @@ export class PieComponent {
       .attr("fill", (d: any) => this.color(this.names[d.index]))
       .attr("d", this.arc)
       .attr("id", (d: any) => d.index)
-      // .append("title")
-      // .text((d: any) => `${this.names[d.index]}`);
+    // .append("title")
+    // .text((d: any) => `${this.names[d.index]}`);
 
     // const groupTick = group.append("g")
     //   .selectAll()
