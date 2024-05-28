@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:flavour-pairings": "node dist/flavour-pairings/server/server.mjs"
+    "serve:ssr:flavour-pairings": "node dist/flavour-pairings/server/server.mjs",
+    "deploy": "ng deploy --base-href=https://ryan-esdale.github.io/ryan-esdale.github.io"
   },
   "private": true,
   "dependencies": {

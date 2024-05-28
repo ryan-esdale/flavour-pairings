@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import { GenerateRibbonDataService } from '../services/generate-ribbon-data.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Flavour } from '../services/_interfaces';
+import { time } from 'console';
 
 @Component({
   selector: 'app-pie',
@@ -21,9 +23,12 @@ export class PieComponent {
   public names: string[] = [];
   private colors = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373", "#ea1b25", "#c2123c"];
 
-  public nameInput: string = '';
-  public availableNames: string[] = []
-  public selectedNames: string[] = ['Orange', 'Chocolate', 'Allspice', 'Peppercorn']
+  public nameInput: Flavour = { id: -1, name: '' };
+  // public nameInput!: Flavour;
+  public availableFlavours: Flavour[] = []
+  //TODO: Have this load in with a selection of 2-4 random options
+  public selectedFlavours: Flavour[] = [{ id: 58, name: 'Orange' }, { id: 21, name: 'Chocolate' }]
+  // public selectedFlavours: Flavour[] = [{ id: 58, name: 'Orange' }, { id: 21, name: 'Chocolate' }, { id: 1, name: 'Allspice' }]
   public filterLimit: number = 2
   private svg: any;
   // private chordGroup: any;
@@ -56,40 +61,69 @@ export class PieComponent {
   constructor(private service: GenerateRibbonDataService) { }
 
   ngOnInit(): void {
-    this.availableNames = this.service.loadHeaders();
-    const dat = this.service.loadData(this.selectedNames, this.filterLimit)
-    this.names = dat[0]
-    this.data = dat[1]
-    this.createSvg();
-    this.updateChords()
+
+    // this.availableNames = this.service.loadHeaders();
+    this.service.loadHeaders().subscribe((values) => {
+      values.forEach((f) => {
+        this.availableFlavours.push(f)
+      })
+    });
+    this.service.loadPairings().subscribe((v) => {
+
+      console.log(v.length)
+      // while (this.service.loadingHeaders || this.service.loadingPairings) {
+      //   console.log("Loading")
+      // }
+      // console.log("Done loading")
+      const dat = this.service.loadData(this.selectedFlavours, this.filterLimit)
+      this.names = dat[0]
+      this.data = dat[1]
+      this.createSvg();
+      this.updateChords()
+    })
   }
 
-  public addHeader(header: string) {
-    if (this.selectedNames.includes(header))
+  public addHeader(header: Flavour) {
+    console.log("Adding: ", header)
+    if (this.selectedFlavours.includes(header))
       return
-    this.selectedNames.push(header)
+    this.selectedFlavours.push(header)
     this.refreshData();
-    console.log(this.selectedNames)
+    console.log(this.selectedFlavours)
   }
 
-  public removeHeader(header: string) {
-    const index = this.selectedNames.indexOf(header)
+  public removeHeader(header: Flavour) {
+    const index = this.selectedFlavours.indexOf(header)
     if (index >= 0)
-      this.selectedNames.splice(index, 1)
+      this.selectedFlavours.splice(index, 1)
     this.refreshData()
   }
 
   public clearHeaders() {
-    this.selectedNames = []
+    this.selectedFlavours = []
     this.filterLimit = 1
     this.refreshData();
   }
 
   public refreshData() {
-    let dat = this.service.loadData(this.selectedNames, this.filterLimit)
+    console.log("dawdwad")
+    let dat = this.service.loadData(this.selectedFlavours, this.filterLimit)
     this.names = dat[0]
     this.data = dat[1]
     this.updateChords()
+    // this.service.loadPairings().subscribe((v) => {
+
+    //   console.log(v.length)
+    //   // while (this.service.loadingHeaders || this.service.loadingPairings) {
+    //   //   console.log("Loading")
+    //   // }
+    //   // console.log("Done loading")
+    //   const dat = this.service.loadData(this.selectedFlavours, this.filterLimit)
+    //   this.names = dat[0]
+    //   this.data = dat[1]
+    //   // this.createSvg();
+    //   this.updateChords()
+    // })
   }
 
   private createSvg(): void {
@@ -129,7 +163,7 @@ export class PieComponent {
       .duration(duration)
       .attr("d", this.ribbon)
       .attr("fill", (d: any) => {
-        if (d.source.index < this.selectedNames.length)
+        if (d.source.index < this.selectedFlavours.length)
           return this.color(this.names[d.source.index])
 
         return "#6F6F6F"
