@@ -17,8 +17,8 @@ export class GenerateRibbonDataService {
   public loadingPairings: boolean = true
 
   constructor(private http: HttpClient) {
-    this.loadHeaders();
-    this.loadPairings();
+    // this.loadHeaders();
+    // this.loadPairings();
   }
 
   loadIDs(): Observable<any> {
@@ -133,8 +133,9 @@ export class GenerateRibbonDataService {
     outputHeaders.forEach((header, index) => {
       let count = 0
       selectedHeaders.forEach((selectedHeader, sIndex) => {
-        // if (index == 0 || sIndex == 0)
-        // return
+        // console.log(outMatrix[index][sIndex])
+        if (index == sIndex)
+          return
 
         if (outMatrix[index][sIndex] || outMatrix[sIndex][index]) {
           // console.log(`matched ${header.name} to ${selectedHeader.name}`)

@@ -1,0 +1,24 @@
+<div>
+      <div>
+            Add new flavour:<br>
+            <input [(ngModel)]="newFlavourName" type="text" placeholder="Flavour Name"><br>
+            <button (click)="uploadFlavour()" clickable>Submit</button> {{newFlavourResponse}}
+      </div>
+      <br>
+      <div>
+            Add new pairing to existing flavours:<br>
+            <select [(ngModel)]="newPairingPrimary">
+                  @for (flavour of flavourList; track flavour) {
+                  <option [value]="flavour.id">{{flavour.name}}</option>
+                  }
+            </select>
+            <select [(ngModel)]="newPairingSecondary">
+                  @for (flavour of flavourList; track flavour) {
+                  <option [value]="flavour.id">{{flavour.name}}</option>
+                  }
+            </select>
+            <input [(ngModel)]="newPairingComments" type="text" placeholder="Comments">
+            <br>
+            <button (click)="uploadPairing()">Submit</button> {{newPairingResponse}}
+      </div>
+</div>
