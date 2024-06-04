@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { BarComponent } from './bar/bar.component';
 import { ScatterComponent } from './scatter/scatter.component';
 import { PieComponent } from './pie/pie.component';
@@ -10,7 +10,7 @@ import { SubmissionPageComponent } from './submission-page/submission-page.compo
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, BarComponent, ScatterComponent, PieComponent, SubmissionPageComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, BarComponent, ScatterComponent, PieComponent, SubmissionPageComponent, RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
