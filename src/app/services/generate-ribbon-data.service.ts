@@ -103,6 +103,8 @@ export class GenerateRibbonDataService {
     outputPairings.forEach((pairing: Pairing) => {
       let primaryIndex = outputHeaders.findIndex(h => h.id == pairing.primary_flavour_id)
       let secondaryIndex = outputHeaders.findIndex(h => h.id == pairing.secondary_flavour_id)
+      if (primaryIndex < 0 || secondaryIndex < 0)
+        return
       // console.log("P: " + primaryIndex + " (" + selectedHeaders[primaryIndex].name + ") S: " + secondaryIndex + " (" + selectedHeaders[secondaryIndex].name)
       // console.log("P: " + primaryIndex + "(" + pairing.primary_flavour_id + ") S: " + secondaryIndex + "(" + pairing.secondary_flavour_id + ")")
       // if (!outputHeaders.includes(flavour))
@@ -131,29 +133,32 @@ export class GenerateRibbonDataService {
     outputHeaders.forEach((header, index) => {
       let count = 0
       selectedHeaders.forEach((selectedHeader, sIndex) => {
-        if (index == 0 || sIndex == 0)
-          return
+        // if (index == 0 || sIndex == 0)
+        // return
+
         if (outMatrix[index][sIndex] || outMatrix[sIndex][index]) {
-          // console.log(`matched ${header} to ${selectedHeader}`)
+          // console.log(`matched ${header.name} to ${selectedHeader.name}`)
           count++
         }
       })
 
       if (count < filterLimit && !selectedHeaders.includes(header)) {
-        // console.log(`${header} has less than ${limit} pairings: ${count}, removing`)
+        // console.log(`${header.name} has less than ${limit} pairings: ${count}, removing`)
         removalIndicies.push(index)
       }
     })
 
     // Do removals seperately to avoid mutating array while iterating it, update index to keep up with shrinking array
-    // let removalCount = 0
-    // removalIndicies.forEach(index => {
-    //   // console.log(outputHeaders[index - removalCount])
-    //   outMatrix.forEach(i => i.splice(index - removalCount, 1))
-    //   outMatrix.splice(index - removalCount, 1)
-    //   outputHeaders.splice(index - removalCount, 1)
-    //   removalCount++
-    // })
+    let removalCount = 0
+    removalIndicies.forEach(index => {
+      // console.log(outputHeaders[index - removalCount])
+      outMatrix.forEach(i => i.splice(index - removalCount, 1))
+      outMatrix.splice(index - removalCount, 1)
+      outputHeaders.splice(index - removalCount, 1)
+      removalCount++
+    })
+
+    // console.log(outputHeaders)
 
     return [outputHeaders.flatMap(m => m.name), outMatrix]
   }

@@ -29,7 +29,7 @@ export class PieComponent {
   //TODO: Have this load in with a selection of 2-4 random options
   public selectedFlavours: Flavour[] = [{ id: 58, name: 'Orange' }, { id: 21, name: 'Chocolate' }]
   // public selectedFlavours: Flavour[] = [{ id: 58, name: 'Orange' }, { id: 21, name: 'Chocolate' }, { id: 1, name: 'Allspice' }]
-  public filterLimit: number = 2
+  public filterLimit: number = 1
   private svg: any;
   // private chordGroup: any;
   private ribbonGroup: any;
@@ -67,10 +67,12 @@ export class PieComponent {
       values.forEach((f) => {
         this.availableFlavours.push(f)
       })
+      this.nameInput = this.availableFlavours[0]
     });
     this.service.loadPairings().subscribe((v) => {
 
       console.log(v.length)
+    }, null, () => {
       // while (this.service.loadingHeaders || this.service.loadingPairings) {
       //   console.log("Loading")
       // }
@@ -107,6 +109,10 @@ export class PieComponent {
 
   public refreshData() {
     console.log("dawdwad")
+    if (this.selectedFlavours.length <= 1)
+      this.filterLimit = 1
+    if (this.filterLimit > this.selectedFlavours.length)
+      this.filterLimit = this.selectedFlavours.length
     let dat = this.service.loadData(this.selectedFlavours, this.filterLimit)
     this.names = dat[0]
     this.data = dat[1]
